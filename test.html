@@ -1,39 +1,91 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous"
-    />
-    <style>
-        @font-face {
-            font-family: 'S-CoreDream-3Light';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI 테스트</title>
 
-        body {
-            font-family: S-CoreDream-3Light;
-        }
-    </style>
-    <title>MBTI</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Jua', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+  </style>
 </head>
-
 <body>
-    <h1>Hello Elice!</h1>
-    
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-      crossorigin="anonymous"
-    ></script>
-</body>
+  <div class="container text-center">
+    <h1 class="mb-4">MBTI 테스트</h1>
+    <p id="question-text">질문이 여기에 표시됩니다.</p>
 
+    <div id="answer-buttons" class="mt-3">
+      <button class="btn btn-primary me-2" onclick="nextQuestion('yes')">예</button>
+      <button class="btn btn-secondary" onclick="nextQuestion('no')">아니오</button>
+    </div>
+
+    <!-- 결과 페이지 이동 버튼 (마지막에만 보이도록) -->
+    <a href="result.html" id="result-btn" class="btn btn-success mt-4 d-none">결과 보기</a>
+  </div>
+
+  <script>
+    // 질문 리스트 (각 질문마다 MBTI 지표 연결)
+    const questions = [
+      { text: "Q1. 새로운 사람들과 쉽게 친해지나요?", dimension: "EI" },
+      { text: "Q2. 혼자 있는 것보다 사람들과 함께 있는 걸 선호하나요?", dimension: "EI" },
+      { text: "Q3. 계획을 세우기보다 즉흥적으로 행동하는 편인가요?", dimension: "JP" },
+      { text: "Q4. 감정보다 논리에 따라 결정을 많이 하나요?", dimension: "TF" },
+      { text: "Q5. 세부사항보다 큰 그림을 더 중시하나요?", dimension: "SN" },
+      { text: "Q6. 사람들 고민에 공감 잘하는 편인가요?", dimension: "TF" },
+      { text: "Q7. 마감일에 맞춰 철저히 계획을 세우나요?", dimension: "JP" },
+      { text: "Q8. 조용히 사색하는 시간이 필요하다고 느끼나요?", dimension: "EI" }
+    ];
+
+    // 응답 저장 객체
+    const answers = {
+      EI: 0,
+      SN: 0,
+      TF: 0,
+      JP: 0
+    };
+
+    let currentIndex = 0;
+    const questionText = document.getElementById("question-text");
+    const answerButtons = document.getElementById("answer-buttons");
+    const resultBtn = document.getElementById("result-btn");
+
+    // 초기 질문 표시
+    questionText.innerText = questions[currentIndex].text;
+
+    function nextQuestion(answer) {
+      const currentQ = questions[currentIndex];
+
+      // 점수 저장 (예 = +1, 아니오 = -1)
+      if (answer === "yes") {
+        answers[currentQ.dimension] += 1;
+      } else {
+        answers[currentQ.dimension] -= 1;
+      }
+
+      currentIndex++;
+
+      if (currentIndex < questions.length) {
+        questionText.innerText = questions[currentIndex].text;
+      } else {
+        // 모든 질문 끝나면 결과 저장
+        localStorage.setItem("mbtiResult", JSON.stringify(answers));
+        questionText.innerText = "모든 질문이 끝났습니다!";
+        answerButtons.classList.add("d-none"); // 버튼 숨기기
+        resultBtn.classList.remove("d-none");  // 결과 버튼 보이기
+      }
+    }
+  </script>
+</body>
 </html>
